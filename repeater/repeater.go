@@ -69,7 +69,7 @@ func (repeater *Repeater) InitCustom(pattern []string, width int, frequencyInMs 
 	repeater.Frequency = frequencyInMs
 }
 
-func (repeater *Repeater) Play() {
+func (repeater *Repeater) Repeat() {
 	fmt.Printf("\r%s", repeater.Pattern[(repeater.Index)%len(repeater.Pattern)])
 	repeater.Index++
 

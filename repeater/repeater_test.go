@@ -10,7 +10,7 @@ func TestWheel(t *testing.T) {
 	repeater.InitPreset("braille")
 
 	for i := 0; i <= 100; i++ {
-		repeater.Play()
+		repeater.Repeat()
 	}
 
 	repeater.End()
