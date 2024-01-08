@@ -1,40 +1,33 @@
 package repeater
 
 import (
-	"fmt"
-	"time"
-
+	"github.com/12yanogden/errors"
 	"github.com/12yanogden/maps"
 )
 
 type Preset struct {
-	Pattern   []string
-	Width     int
-	Frequency int
+	Pattern []string
+	Width   int
 }
 
 type Repeater struct {
-	Index     int
-	Pattern   []string
-	Width     int
-	Frequency int
+	Index   int
+	Pattern []string
+	Width   int
 }
 
 var presets = map[string]Preset{
 	"line_spinner": {
-		Pattern:   []string{"|", "/", "-", `\`},
-		Width:     1,
-		Frequency: 100,
+		Pattern: []string{"|", "/", "-", `\`},
+		Width:   1,
 	},
 	"wave": {
-		Pattern:   []string{"▁", "▂", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "},
-		Width:     6,
-		Frequency: 100,
+		Pattern: []string{"▁", "▂", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "},
+		Width:   8,
 	},
 	"braille": {
-		Pattern:   []string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
-		Width:     1,
-		Frequency: 100,
+		Pattern: []string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
+		Width:   1,
 	},
 }
 
@@ -44,13 +37,12 @@ func (repeater *Repeater) Init() {
 	repeater.InitCustom(
 		preset.Pattern,
 		preset.Width,
-		preset.Frequency,
 	)
 }
 
 func (repeater *Repeater) InitPreset(presetName string) {
 	if !maps.HasKey(presets, presetName) {
-		fmt.Println("preset '" + presetName + "' not found")
+		errors.Scream("preset '" + presetName + "' not found")
 	}
 
 	preset := presets[presetName]
@@ -58,29 +50,23 @@ func (repeater *Repeater) InitPreset(presetName string) {
 	repeater.InitCustom(
 		preset.Pattern,
 		preset.Width,
-		preset.Frequency,
 	)
 }
 
-func (repeater *Repeater) InitCustom(pattern []string, width int, frequencyInMs int) {
+func (repeater *Repeater) InitCustom(pattern []string, width int) {
 	repeater.Index = 0
 	repeater.Pattern = pattern
 	repeater.Width = width
-	repeater.Frequency = frequencyInMs
 }
 
-func (repeater *Repeater) Repeat() {
-	fmt.Printf("\r%s", repeater.Pattern[(repeater.Index)%len(repeater.Pattern)])
+func (repeater *Repeater) Repeat() string {
+	out := repeater.Pattern[(repeater.Index)%len(repeater.Pattern)]
 	repeater.Index++
 
 	remainingCount := repeater.Width - 1
 	for i := 0; i < remainingCount; i++ {
-		fmt.Printf("%s", repeater.Pattern[(i+repeater.Index)%len(repeater.Pattern)])
+		out += repeater.Pattern[(i+repeater.Index)%len(repeater.Pattern)]
 	}
 
-	time.Sleep(time.Duration(repeater.Frequency) * time.Millisecond)
-}
-
-func (repeater *Repeater) End() {
-	fmt.Println()
+	return out
 }
